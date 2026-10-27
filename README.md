@@ -7,3 +7,5 @@ might work on other ones that can do midi, it will be minimal and only what i ne
 this is being made to satisfy a need for a wireless controller in a very specific scenario. it will be opinionated.
 
 Deps: idfk, figure it out. i got a full install i think.
+
+started from http server example

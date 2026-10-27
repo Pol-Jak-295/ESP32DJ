@@ -1,5 +1,5 @@
 path = "$HOME/.espressif"
-idf_path = "$HOME.espressif/v6.1/esp-idf"
+idf_path = "$HOME/.espressif/v6.1/esp-idf"
 esp_idf_json_path = "$HOME/.espressif/tools"
 tool_download_folder_name = "$HOME/.espressif/dist"
 tool_install_folder_name = "$HOME/.espressif/tools"
