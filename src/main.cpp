@@ -1,6 +1,9 @@
 #include <WiFi.h>
 #include <WebServer.h>
 #include <LittleFS.h>
+#include <USBMIDI.h>
+
+USBMIDI MIDI;
 
 WebServer server(80);
 const char *SSID = "ESP32DJ";
@@ -14,11 +17,21 @@ void handleRoot() {
 }
 
 void handlePress() {
-  String btn = server.arg("btn");     // e.g. /press?btn=play
-  Serial.printf("button: %s\n", btn.c_str());
-  // TODO: map btn -> MIDI / action
+  String btn = server.arg("btn");
+
+  if (btn == "play") {
+    // Send Note On, note 60, velocity 127, channel 1
+    MIDI.noteOn(60, 127, 1);
+    // Or send Control Change: MIDI.sendControlChange(20, 127, 1);
+  } else if (btn == "stop") {
+    MIDI.noteOn(61, 127, 1);
+  } else if (btn == "cue") {
+    MIDI.noteOn(62, 127, 1);
+  }
+
   server.send(200, "text/plain", "ok");
 }
+
 
 void setup() {
   Serial.begin(115200);
@@ -31,6 +44,8 @@ void setup() {
   server.on("/press", handlePress);
   server.onNotFound([]() { server.send(404, "text/plain", "not found"); });
   server.begin();
+
+  MIDI.begin();
 }
 
 void loop() {
