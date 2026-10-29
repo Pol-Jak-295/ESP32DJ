@@ -1,4 +1,6 @@
+#include <Arduino.h>
 #include <WiFi.h>
+#include <USB.h>
 #include <WebServer.h>
 #include <LittleFS.h>
 #include <USBMIDI.h>
@@ -46,6 +48,7 @@ void setup() {
   server.begin();
 
   MIDI.begin();
+  USB.begin();
 }
 
 void loop() {
