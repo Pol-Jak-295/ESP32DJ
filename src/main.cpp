@@ -5,11 +5,25 @@
 #include <LittleFS.h>
 #include <USBMIDI.h>
 
+
+
+
 USBMIDI MIDI;
 
+
+
+//-------------- identity -----------------------------
+#define DEVICE_NAME "ESP32DJ"
+#define DEVICE_NAME_SUFFIX ""
+#define AP_PASS "djcontroller"
+
+// ---------- derived — don't hand-edit these----------
+#define USB_PRODUCT_NAME DEVICE_NAME DEVICE_NAME_SUFFIX
+#define AP_SSID          DEVICE_NAME DEVICE_NAME_SUFFIX
+
+
+
 WebServer server(80);
-const char *SSID = "ESP32DJ";
-const char *PASS = "djcontroller";   // >= 8 chars
 
 void handleRoot() {
   File f = LittleFS.open("/index.html", "r");
@@ -118,7 +132,7 @@ void handlePress() {
 void setup() {
   Serial.begin(115200);
   LittleFS.begin(true);              // true = format on mount fail
-  WiFi.softAP(SSID, PASS);
+  WiFi.softAP(AP_SSID, AP_PASS);
   Serial.print("AP IP: ");
   Serial.println(WiFi.softAPIP());   // 192.168.4.1
 
@@ -126,6 +140,8 @@ void setup() {
   server.on("/press", handlePress);
   server.onNotFound([]() { server.send(404, "text/plain", "not found"); });
   server.begin();
+
+  USB.productName(USB_PRODUCT_NAME);
 
   MIDI.begin();
   USB.begin();
