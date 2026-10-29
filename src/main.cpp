@@ -96,13 +96,13 @@ void handlePress() {
   }  else if (btn == "s2_1"){
 	  MIDI.noteOn(85, 127, 1);
 	  MIDI.noteOn(85, 0, 1);
-  }  else if (btn == "s1_2"){
+  }  else if (btn == "s2_2"){
 	  MIDI.noteOn(86, 127, 1);
 	  MIDI.noteOn(86, 0, 1);
-  }  else if (btn == "s1_3"){
+  }  else if (btn == "s2_3"){
 	  MIDI.noteOn(87, 127, 1);
 	  MIDI.noteOn(87, 0, 1);
-  }  else if (btn == "s1_4"){
+  }  else if (btn == "s2_4"){
 	  MIDI.noteOn(88, 127, 1);
 	  MIDI.noteOn(88, 0, 1);
   } 
