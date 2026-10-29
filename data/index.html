@@ -1,50 +1,224 @@
 <!doctype html>
-<html><body style="font-family:sans-serif;text-align:center">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ESP32DJ</title>
+<style>
+  :root{
+    --bg:#11111b;
+    --panel:#1e1e2e;
+    --panel-2:#181825;
+    --stroke:#89b4fa;
+    --text:#e7ecf5;
+    --muted:#8a94a8;
+    --accent:#a6e3a1;
+    --accent-2:#f6a331;
+    --glow:0 0 0 1px rgba(0,224,255,.25), 0 0 18px rgba(0,224,255,.25);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    color:var(--text);
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #16203a 0%, transparent 60%),
+      radial-gradient(900px 500px at 50% 110%, #2a0f22 0%, transparent 60%),
+      var(--bg);
+    min-height:100%;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:32px 16px 48px;
+  }
+
+  h1{
+    margin:0 0 28px;
+    font-size:clamp(28px,5vw,44px);
+    letter-spacing:.14em;
+    font-weight:800;
+    background:linear-gradient(90deg,var(--accent),#a78bfa,var(--accent-2));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    text-shadow:0 0 30px rgba(0,224,255,.15);
+  }
+
+  .decks{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:24px;
+    width:100%;
+    max-width:900px;
+  }
+  @media (max-width:720px){
+    .decks{grid-template-columns:1fr}
+  }
+
+  .deck{
+    background:linear-gradient(45deg,var(--panel),var(--panel-2));
+    border:1px solid var(--stroke);
+    border-radius:18px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.03);
+  }
+
+  .deck-title{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:16px;
+    font-size:13px;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+  }
+  .deck-title .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 12px var(--accent);
+  }
+  .deck.right .deck-title .dot{
+    background:var(--accent-2);
+    box-shadow:0 0 12px var(--accent-2);
+  }
+
+  .row{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:8px;
+    margin-bottom:10px;
+  }
+
+  button{
+    appearance:none;
+    border:1px solid var(--stroke);
+    background:linear-gradient(180deg,#222a3a,#171d29);
+    color:var(--text);
+    font:inherit;
+    font-size:13px;
+    font-weight:600;
+    padding:12px 10px;
+    border-radius:10px;
+    cursor:pointer;
+    transition:transform .06s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+  }
+  button:hover{
+    border-color:rgba(0,224,255,.5);
+    box-shadow:0 0 14px rgba(0,224,255,.2);
+  }
+  button:active{
+    transform:translateY(1px) scale(.985);
+    background:linear-gradient(180deg,#1a2130,#121723);
+    box-shadow:inset 0 0 12px rgba(0,224,255,.25);
+  }
+  .deck.right button:hover{
+    border-color:rgba(255,46,136,.5);
+    box-shadow:0 0 14px rgba(255,46,136,.2);
+  }
+  .deck.right button:active{
+    box-shadow:inset 0 0 12px rgba(255,46,136,.3);
+  }
+
+  /* Highlight Play buttons */
+  .row .play{
+    grid-column:span 1;
+    background:linear-gradient(180deg,#0f3b46,#0a2630);
+    border-color:rgba(0,224,255,.45);
+    color:#c9f7ff;
+  }
+  .deck.right .play{
+    background:linear-gradient(180deg,#461030,#2a0a1c);
+    border-color:rgba(120,255,75,.45);
+    color:#ffd0e4;
+  }
+
+  /* Stem row full width buttons */
+  .row.stems{
+    grid-template-columns:repeat(4,1fr);
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px dashed var(--stroke);
+  }
+  .row.stems button{
+    background:linear-gradient(180deg,#1c2436,#141a26);
+  }
+
+  footer{
+    margin-top:28px;
+    color:var(--muted);
+    font-size:12px;
+    letter-spacing:.15em;
+    text-transform:uppercase;
+  }
+</style>
+</head>
+<body>
+
 <h1>ESP32DJ</h1>
-<div>
-	Deck 1 (left)
+
+<div class="decks">
+  <!-- Deck 1 -->
+  <section class="deck">
+    <div class="deck-title"><span>Deck 1 · Left</span><span class="dot"></span></div>
+
+    <div class="row">
+      <button class="play" onclick="fetch('/press?btn=play')">Play/Pause</button>
+      <button onclick="fetch('/press?btn=c1_1')">Cue 1</button>
+      <button onclick="fetch('/press?btn=c1_2')">Cue 2</button>
+      <button onclick="fetch('/press?btn=c1_3')">Cue 3</button>
+      <button onclick="fetch('/press?btn=c1_4')">Cue 4</button>
+    </div>
+
+    <div class="row">
+      <button onclick="fetch('/press?btn=cue')">Cue</button>
+      <button onclick="fetch('/press?btn=c1_5')">Cue 5</button>
+      <button onclick="fetch('/press?btn=c1_6')">Cue 6</button>
+      <button onclick="fetch('/press?btn=c1_7')">Cue 7</button>
+      <button onclick="fetch('/press?btn=c1_8')">Cue 8</button>
+    </div>
+
+    <div class="row stems">
+      <button onclick="fetch('/press?btn=s1_1')">Drums</button>
+      <button onclick="fetch('/press?btn=s1_2')">Bass</button>
+      <button onclick="fetch('/press?btn=s1_3')">Melody</button>
+      <button onclick="fetch('/press?btn=s1_4')">Vocal</button>
+    </div>
+  </section>
+
+  <!-- Deck 2 -->
+  <section class="deck right">
+    <div class="deck-title"><span>Deck 2 · Right</span><span class="dot"></span></div>
+
+    <div class="row">
+      <button class="play" onclick="fetch('/press?btn=play2')">Play/Pause</button>
+      <button onclick="fetch('/press?btn=c2_1')">Cue 1</button>
+      <button onclick="fetch('/press?btn=c2_2')">Cue 2</button>
+      <button onclick="fetch('/press?btn=c2_3')">Cue 3</button>
+      <button onclick="fetch('/press?btn=c2_4')">Cue 4</button>
+    </div>
+
+    <div class="row">
+      <button onclick="fetch('/press?btn=cue2')">Cue</button>
+      <button onclick="fetch('/press?btn=c2_5')">Cue 5</button>
+      <button onclick="fetch('/press?btn=c2_6')">Cue 6</button>
+      <button onclick="fetch('/press?btn=c2_7')">Cue 7</button>
+      <button onclick="fetch('/press?btn=c2_8')">Cue 8</button>
+    </div>
+
+    <div class="row stems">
+      <button onclick="fetch('/press?btn=s2_1')">Drums</button>
+      <button onclick="fetch('/press?btn=s2_2')">Bass</button>
+      <button onclick="fetch('/press?btn=s2_3')">Melody</button>
+      <button onclick="fetch('/press?btn=s2_4')">Vocal</button>
+    </div>
+  </section>
 </div>
-<div>
-<button onclick="fetch('/press?btn=play')">Play/Pause</button>
-<button onclick="fetch('/press?btn=c1_1')">cue 1</button>
-<button onclick="fetch('/press?btn=c1_2')">cue 2</button>
-<button onclick="fetch('/press?btn=c1_3')">cue 3</button>
-<button onclick="fetch('/press?btn=c1_4')">cue 4</button>
-</div>
-<div>
-<button onclick="fetch('/press?btn=cue')">Cue</button>
-<button onclick="fetch('/press?btn=c1_5')">cue 5</button>
-<button onclick="fetch('/press?btn=c1_6')">cue 6</button>
-<button onclick="fetch('/press?btn=c1_7')">cue 7</button>
-<button onclick="fetch('/press?btn=c1_8')">cue 8</button>
-</div>
-<div>
-<button onclick="fetch('/press?btn=s1_1')">Drums</button>
-<button onclick="fetch('/press?btn=s1_2')">Bass</button>
-<button onclick="fetch('/press?btn=s1_3')">Melody</button>
-<button onclick="fetch('/press?btn=s1_4')">Vocal</button>
-</div>
-<div>
-	Deck 2 (right)
-</div>
-<div>
-<button onclick="fetch('/press?btn=play2')">Play/Pause</button>
-<button onclick="fetch('/press?btn=c2_1')">cue 1</button>
-<button onclick="fetch('/press?btn=c2_2')">cue 2</button>
-<button onclick="fetch('/press?btn=c2_3')">cue 3</button>
-<button onclick="fetch('/press?btn=c2_4')">cue 4</button>
-</div>
-<div>
-<button onclick="fetch('/press?btn=cue2')">Cue</button>
-<button onclick="fetch('/press?btn=c2_5')">cue 5</button>
-<button onclick="fetch('/press?btn=c2_6')">cue 6</button>
-<button onclick="fetch('/press?btn=c2_7')">cue 7</button>
-<button onclick="fetch('/press?btn=c2_8')">cue 8</button>
-</div>
-<div>
-<button onclick="fetch('/press?btn=s2_1')">Drums</button>
-<button onclick="fetch('/press?btn=s2_2')">Bass</button>
-<button onclick="fetch('/press?btn=s2_3')">Melody</button>
-<button onclick="fetch('/press?btn=s2_4')">Vocal</button>
-</div>
-</body></html>
+
+<footer>Tap · Press · Play</footer>
+
+</body>
+</html>
