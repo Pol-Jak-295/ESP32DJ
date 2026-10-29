@@ -61,7 +61,7 @@ void handlePress() {
     MIDI.noteOn(79, 127, 1);
   } else if (btn == "c2_8"){
     MIDI.noteOn(80, 127, 1);
-  } }
+  } 
   server.send(200, "text/plain", "ok");
 }
 
